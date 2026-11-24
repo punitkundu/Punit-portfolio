@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Punit Kundu — Fast Bowler, Founder, Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050f0a;--pn:#0a1c13;--ln:#1b3d2b;--g:#0f4a2c;--red:#c9302a;--red2:#ef5a50;--gold:#dbb96b;--iv:#f4f1e8;--tx:#eef3ef;--mu:#8fa398;--bb:'Bebas Neue',Impact,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;color-scheme:dark;box-sizing:border-box}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.6 Inter,system-ui,sans-serif;overflow-x:hidden}
+body.lock{overflow:hidden;height:100vh}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:820px;margin:0 auto;padding:0 22px}
+section{padding:90px 0 40px;position:relative}
+.lab{font:500 11px var(--mono);letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin:0 0 8px}
+h2{font:400 clamp(44px,9vw,76px)/.95 var(--bb);letter-spacing:.02em;margin:0 0 30px}
+h2 em{font-style:normal;color:var(--red2)}
+nav{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 12px) 18px 12px;background:linear-gradient(#050f0aee,transparent);font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+nav b{font:400 22px var(--bb);letter-spacing:.06em}nav b em{font-style:normal;color:var(--red2)}
+nav div{display:flex;gap:13px;color:var(--mu)}nav div a:hover{color:var(--tx)}
+/* balls */
+.ball{position:relative;border-radius:50%;flex:none;filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}
+.ball.red{background:url("assets/ball-red.webp") center/cover no-repeat}
+.ball.wh{background:url("assets/ball-white.webp") center/cover no-repeat}
+.sm{display:none}
+/* loader */
+#ld{position:fixed;inset:0;z-index:100;background:#030a06;transition:opacity 1s,visibility 1s}
+#ld.out{opacity:0;visibility:hidden}
+.lp{position:absolute;left:0;right:0;top:20%;display:flex;justify-content:center;gap:12px}
+.lp .ball{width:38px;height:38px;opacity:.2;filter:grayscale(1) brightness(.55);transition:opacity .5s,filter .5s}
+.lp .ball.on{opacity:1;filter:drop-shadow(0 0 14px rgba(255,240,200,.55));animation:pop .6s ease-out,spin 6s linear .6s infinite}
+@keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+.pb{position:absolute;bottom:calc(23% + 3px);left:7px;width:30px;height:30px;z-index:3}
+.pb .ball{width:100%;height:100%}
+.bat{position:absolute;right:61px;bottom:calc(23% - 8px);width:34px;height:112px;transform-origin:50% 6%;transform:rotate(-30deg);z-index:2}
+#ld.hit .bat{animation:swing .5s cubic-bezier(.3,0,.2,1) forwards}
+@keyframes swing{to{transform:rotate(55deg)}}
+#ld.hit .pb .ball{animation:fly 1s cubic-bezier(.2,.6,.3,1) .22s forwards}
+@keyframes fly{to{transform:translate(-190px,-330px) rotate(-900deg) scale(.45);opacity:0}}
+#ld .nm{position:absolute;left:0;right:0;bottom:32%;text-align:center;font:400 44px var(--bb);letter-spacing:.08em}
+#ld .bar{position:absolute;left:22px;right:78px;bottom:23%;height:2px;background:#1a2c22}
+#ld .bar i{display:block;height:100%;width:0;background:var(--red2)}
+#ld .lb{position:absolute;left:22px;right:22px;bottom:19%;display:flex;justify-content:space-between;font:400 10px var(--mono);letter-spacing:.2em;color:var(--mu)}
+/* hero */
+.hero{position:relative;height:clamp(600px,92vh,780px);overflow:hidden;background:#02050a}
+.bg{position:absolute;left:50%;bottom:0;width:175vw;aspect-ratio:16/9;transform:translateX(-52.5%);-webkit-mask-image:linear-gradient(transparent 0,#000 42%);mask-image:linear-gradient(transparent 0,#000 42%)}
+.bg img{display:block;width:100%;height:100%;object-fit:cover;filter:brightness(1.08) saturate(1.12);animation:kb 24s ease-in-out infinite alternate}
+.gl1,.gl2{position:absolute;width:20%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,246,214,.7),rgba(255,246,214,.15) 40%,transparent 68%);mix-blend-mode:screen;animation:fli 3.4s ease-in-out infinite}
+.gl1{left:13.6%;top:33%}.gl2{left:73%;top:44%;animation-delay:-1.4s}
+@keyframes fli{50%{opacity:.6}}
+.hero:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(#02050a 0,rgba(2,5,10,.2) 38%,rgba(2,5,10,.15) 70%,rgba(2,5,10,.6) 100%);pointer-events:none}
+.hlab{position:absolute;top:calc(env(safe-area-inset-top,0px) + 74px);left:0;right:0;z-index:6;text-align:center;font:500 9px var(--mono);letter-spacing:.22em;color:var(--gold);padding:0 14px;opacity:0}
+.nm{position:absolute;left:0;right:0;top:0;height:0;z-index:2}
+.wd{position:absolute;top:0;display:flex;font:400 var(--fs,80px)/1 'Bebas Neue',Impact,'Arial Narrow',sans-serif;letter-spacing:.015em;transform:translateY(-50%);filter:drop-shadow(0 6px 16px rgba(0,0,0,.65))}
+.w1{right:calc(50% + var(--g,100px)/2 - var(--ho,0px))}.w2{left:calc(50% + var(--g,100px)/2 + var(--ho,0px))}
+.lo{display:inline-block;opacity:0}
+.l{display:inline-block;color:transparent;-webkit-background-clip:text;background-clip:text;background-size:300% 100%;animation:shine 5s linear infinite,wave 3.2s ease-in-out infinite;animation-delay:calc(var(--i)*-.45s),calc(var(--i)*-.25s)}
+.w1 .l{background-image:linear-gradient(100deg,#f7f1e3 0%,#ffd98a 25%,#fff 50%,#ffd98a 75%,#f7f1e3 100%)}
+.w2 .l{background-image:linear-gradient(100deg,#e5352c 0%,#ff7a45 25%,#ffd36b 50%,#ff7a45 75%,#e5352c 100%)}
+@keyframes shine{to{background-position:300% 0}}@keyframes wave{50%{transform:translateY(-7px)}}
+.live .lo{animation:lin 1.1s cubic-bezier(.2,.9,.3,1.15) calc(.5s + var(--i)*.1s) both}
+@keyframes lin{from{opacity:0;transform:translateY(46px) scale(.55);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+.me{position:absolute;left:50%;bottom:0;width:var(--pw,300px);margin-left:calc(var(--pw,300px)/-2);z-index:4;opacity:0}
+.mi{transform-origin:50% 100%;will-change:transform}
+.me img{display:block;width:100%;-webkit-mask-image:linear-gradient(#000 80%,transparent 99%);mask-image:linear-gradient(#000 80%,transparent 99%);filter:drop-shadow(0 0 2px rgba(255,236,190,.55)) drop-shadow(0 0 30px rgba(255,236,190,.16));animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-7px)}}
+.live .me{animation:rise 1.5s cubic-bezier(.16,.84,.24,1) .15s both}.live .hlab{animation:up 1s ease .4s forwards}.live .lt{animation:lt 1s ease 1.8s forwards}.live .sc{animation:up 1s ease 2.2s forwards}
+@keyframes rise{from{opacity:0;transform:translateY(120px)}to{opacity:1;transform:none}}
+@keyframes up{to{opacity:1;transform:none}}@keyframes lt{to{opacity:1;transform:none}}
+.rb{position:absolute;bottom:1.6%;z-index:6;pointer-events:none}
+.rb .ball{width:100%;height:100%}
+.lt{position:absolute;left:0;bottom:11%;z-index:6;display:flex;opacity:0;transform:translateX(-40px)}
+.lt i{width:8px;background:var(--red2)}
+.lt div{background:rgba(5,15,10,.82);backdrop-filter:blur(6px);padding:9px 20px 9px 14px;border:1px solid #1d3d2c;border-left:0}
+.lt b{display:block;font:400 22px var(--bb);letter-spacing:.08em}
+.lt span{font:400 9px var(--mono);letter-spacing:.22em;color:var(--gold)}
+.sc{position:absolute;bottom:3%;right:18px;z-index:6;font:400 9px var(--mono);letter-spacing:.3em;color:var(--mu);opacity:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+.sc i{width:1px;height:26px;background:linear-gradient(#fff,transparent);animation:sl 2s infinite}@keyframes sl{50%{transform:scaleY(.4);transform-origin:top}}
+@media(min-width:760px){.bg{left:0;width:100%;transform:none}}
+@media(max-width:759px){.hero{height:clamp(560px,72vh,640px)}.bg{height:64%;aspect-ratio:auto}.lt{display:none}}
+/* divider */
+.roll{position:relative;height:46px;margin:30px auto 0;max-width:820px;padding:0 22px}
+.roll:before{content:"";position:absolute;left:22px;right:22px;top:22px;border-top:2px dashed #1f4a35}
+.roll .ball{position:absolute;left:22px;top:6px;width:32px;height:32px;transition:left 2.4s cubic-bezier(.3,.6,.3,1)}
+.roll.in .ball{left:calc(100% - 54px)}
+.roll .ball{animation:spin 1.1s linear infinite}
+/* about */
+.pcard{display:grid;grid-template-columns:230px 1fr;gap:34px;align-items:start}
+.pic{position:relative;aspect-ratio:1;border-radius:6px;overflow:hidden;border:1px solid var(--ln);box-shadow:0 0 50px rgba(255,240,190,.12)}
+.pic img{display:block;width:100%;height:100%;object-fit:cover}
+.pic:after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--red2)}
+.fx div{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:13px 0 13px 14px;border-bottom:1px solid var(--ln);position:relative}
+.fx div:before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;background:var(--red2)}
+.fx small{font:400 10px var(--mono);letter-spacing:.2em;color:var(--gold);text-transform:uppercase;flex:none}
+.fx span{text-align:right;font-size:16px}
+/* field */
+.fr{position:relative;border:1px solid var(--ln);border-radius:6px;overflow:hidden;box-shadow:0 0 60px rgba(255,240,190,.1)}
+.fi{position:relative;aspect-ratio:1336/1177;overflow:hidden}
+.fi img{display:block;width:100%;height:100%;object-fit:cover;animation:kb 18s ease-in-out infinite alternate;transform-origin:30% 40%}
+@keyframes kb{to{transform:scale(1.08)}}
+.fi:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(5,15,10,.8)),radial-gradient(90% 70% at 50% 40%,transparent 55%,rgba(5,15,10,.5))}
+.beam{position:absolute;top:-25%;width:55%;height:150%;z-index:2;background:linear-gradient(180deg,rgba(255,244,214,.34),transparent 72%);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);mix-blend-mode:screen;animation:fk2 4.5s ease-in-out infinite alternate}
+.b1{left:-14%}.b2{right:-14%;animation-delay:-2s;transform:scaleX(-1)}
+@keyframes fk2{from{opacity:.25}to{opacity:.85}}
+.hud{position:absolute;z-index:3;font:400 9px var(--mono);letter-spacing:.22em;color:#e9eef8}
+.hud.t{top:14px;left:16px;display:flex;align-items:center;gap:8px}
+.hud.t i{width:6px;height:6px;border-radius:50%;background:#ff4d4d;box-shadow:0 0 8px #ff4d4d;animation:fli 1.2s infinite}
+.hud.b{bottom:14px;right:16px}
+.c{position:absolute;z-index:3;width:18px;height:18px;border:0 solid rgba(255,255,255,.7)}
+.c.tl{top:10px;left:10px;border-width:2px 0 0 2px}.c.tr{top:10px;right:10px;border-width:2px 2px 0 0}.c.bl{bottom:10px;left:10px;border-width:0 0 2px 2px}.c.br{bottom:10px;right:10px;border-width:0 2px 2px 0}
+.trk{position:absolute;z-index:3;left:15.6%;top:36%;width:44px;height:44px;margin:-22px 0 0 -22px;border:1.5px solid #ff6b5f;border-radius:50%;animation:pg 1.8s ease-out infinite}
+.trk:before{content:"";position:absolute;inset:-7px;border:1px dashed rgba(255,255,255,.7);border-radius:50%;animation:spin 6s linear infinite}
+.trk span{position:absolute;left:62px;top:-4px;font:400 9px var(--mono);letter-spacing:.2em;color:#ff8a80}
+@keyframes pg{0%{box-shadow:0 0 0 0 rgba(255,107,95,.6)}100%{box-shadow:0 0 0 22px rgba(255,107,95,0)}}@keyframes spin{to{transform:rotate(360deg)}}
+.cap{font:400 12px/1.7 var(--mono);color:#b7c4bc;text-align:center;margin:22px 0 14px}
+.ch{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.ch span{display:flex;align-items:center;gap:9px;border:1px solid var(--ln);background:var(--pn);border-radius:99px;padding:8px 16px;font:400 10px var(--mono);letter-spacing:.16em;text-transform:uppercase}
+.ch .ball{width:18px;height:18px;filter:none}
+.ch .ball{animation:spin 3s linear infinite}
+/* scoreboard */
+.sb{border:1px solid var(--ln);background:var(--pn)}
+.sh{display:flex;justify-content:space-between;padding:14px 18px;background:#0e2a1c;border-bottom:1px solid var(--ln);font:500 10px var(--mono);letter-spacing:.2em;color:var(--gold)}
+.sr{display:flex;gap:16px;align-items:center;padding:18px;border-bottom:1px solid var(--ln);position:relative;opacity:0;transform:translateX(-24px);transition:.7s}
+.sr.in{opacity:1;transform:none}.sr:last-child{border:0}
+.sr:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--red2)}
+.sr b{font:400 40px var(--bb);color:var(--gold);width:46px;flex:none}
+.sr h4{font:600 15px/1.3 Inter;margin:0 0 2px;text-transform:uppercase;letter-spacing:.04em}
+.sr p{margin:0;color:var(--mu);font-size:13px}
+.sr i{margin-left:auto;font:400 9px var(--mono);letter-spacing:.2em;color:var(--red2);font-style:normal;border:1px solid #5a2220;padding:4px 8px;border-radius:3px;flex:none}
+/* innings */
+.tl{position:relative;padding-left:48px}
+.tl:before{content:"";position:absolute;left:15px;top:6px;bottom:6px;border-left:2px dashed #1f4a35}
+.ti{position:relative;margin-bottom:30px;opacity:0;transform:translateY(20px);transition:.8s}
+.ti.in{opacity:1;transform:none}
+.ti .ball{position:absolute;left:-48px;top:0;width:32px;height:32px;animation:spin 4s linear infinite}
+.ti h4{font:400 28px var(--bb);letter-spacing:.04em;margin:0}
+.ti p{margin:0;color:var(--mu);font-size:14px}
+/* projects */
+.pj{border:1px solid var(--ln);background:var(--pn);margin-bottom:26px;display:grid;grid-template-columns:1fr 200px;gap:22px;padding:24px;position:relative;overflow:hidden}
+.pj:before{content:attr(data-n);position:absolute;right:14px;top:-18px;font:400 120px var(--bb);color:#12301f;line-height:1}
+.pj>*{position:relative}
+.pj h3{font:400 38px/1 var(--bb);letter-spacing:.03em;margin:0 0 10px}
+.pj p{color:#b7c4bc;margin:0 0 20px;font-size:14px}
+.pj small{display:block;font:400 10px var(--mono);letter-spacing:.2em;color:var(--gold);margin-bottom:10px;text-transform:uppercase}
+.bt{display:inline-block;background:var(--red);color:#fff;padding:12px 22px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;border-radius:3px;transition:.3s}
+.bt:hover{background:var(--red2);transform:translateY(-2px)}
+.shot{display:block;border-radius:20px;overflow:hidden;border:1px solid #2b5a42;box-shadow:0 0 40px rgba(255,240,190,.1);transition:transform .4s;align-self:center}
+.shot:hover{transform:translateY(-6px) rotate(-1.5deg)}.shot img{display:block;width:100%}
+/* orbit */
+.orb{position:relative;width:var(--S,340px);height:var(--S,340px);margin:20px auto 0}
+.core{position:absolute;left:50%;top:50%;width:90px;height:90px;margin:-45px 0 0 -45px;border-radius:50%;display:grid;place-items:center;font:400 38px var(--bb);letter-spacing:.04em;background:radial-gradient(circle at 35% 30%,#ff7a6e,#b3261e 60%,#5a0f0b);box-shadow:0 0 44px rgba(239,90,80,.55);animation:pls 2.4s ease-in-out infinite}
+@keyframes pls{50%{transform:scale(1.07);box-shadow:0 0 64px rgba(239,90,80,.75)}}
+.or{position:absolute;left:50%;top:50%;border:1px dashed #2a6446;border-radius:50%}
+.o1{width:calc(var(--S)*.58);height:calc(var(--S)*.58);margin:calc(var(--S)*-.29) 0 0 calc(var(--S)*-.29);animation:spin 38s linear infinite}
+.o2{width:calc(var(--S)*.9);height:calc(var(--S)*.9);margin:calc(var(--S)*-.45) 0 0 calc(var(--S)*-.45);animation:spin 60s linear infinite reverse}
+.oc{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;transform:rotate(var(--a)) translateX(var(--rr)) rotate(calc(var(--a)*-1))}
+.ci{position:relative;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font:700 12px Inter;color:#fff;background:var(--bg);border:1px solid rgba(255,255,255,.22);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+.o1 .ci{animation:spin 38s linear infinite reverse}.o2 .ci{animation:spin 60s linear infinite}
+.ci small{position:absolute;top:100%;left:50%;transform:translateX(-50%);margin-top:4px;font:400 8px var(--mono);letter-spacing:.06em;color:#c3cfc8;white-space:nowrap}
+/* skills */
+.fl2{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+.fl2 button{border:1px solid var(--ln);background:var(--pn);color:#c3cfc8;border-radius:99px;padding:11px 18px;font:400 10px var(--mono);letter-spacing:.16em;cursor:pointer;display:flex;align-items:center;gap:8px;text-transform:uppercase}
+.fl2 button i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+.fl2 button.on{background:var(--iv);color:#06130d;border-color:var(--iv)}
+.cloud{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:baseline;line-height:1.25}
+.cloud span{font-family:Inter;font-weight:500;color:var(--c);transition:opacity .4s,transform .4s}
+.cloud span.off{opacity:.1;transform:scale(.9)}
+/* contact */
+.ct{text-align:center;padding:100px 0 60px;background:radial-gradient(70% 80% at 50% 0,rgba(255,244,200,.1),transparent 70%)}
+.ct h2{font-size:clamp(54px,12vw,110px)}
+.ct p{color:var(--mu);max-width:30em;margin:0 auto 34px}
+.soc{display:flex;justify-content:center;gap:16px}
+.soc a{width:60px;height:60px;display:grid;place-items:center;border:1px solid var(--ln);background:var(--pn);border-radius:8px;transition:.3s}
+.soc a:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 0 26px rgba(219,185,107,.25)}
+.soc svg{width:28px;height:28px}
+.em{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:22px;font:400 12px var(--mono);color:#b7c4bc;flex-wrap:wrap}
+.em button{border:1px solid var(--ln);background:var(--pn);color:var(--gold);font:400 10px var(--mono);letter-spacing:.2em;padding:7px 12px;border-radius:99px;cursor:pointer}
+footer{padding:26px 0 40px;text-align:center;font:400 10px var(--mono);letter-spacing:.22em;color:var(--mu);border-top:1px solid var(--ln)}
+.rv{opacity:0;transform:translateY(30px);transition:opacity 1s,transform 1s}.rv.in{opacity:1;transform:none}
+@media(max-width:700px){.pcard{grid-template-columns:1fr}.pic{max-width:260px}.pj{grid-template-columns:1fr}.shot{max-width:200px}.tw{width:44px}.tw b{height:150px}.lt b{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv,.sr,.ti{opacity:1;transform:none}.ht h1,.ht .lab,.lt,.sc{opacity:1;filter:none;transform:none}#ld{display:none}.roll .ball{left:calc(100% - 54px)}}
+</style>
+</head>
+<body class="lock">
+
+<div id="ld"><div class="lp" id="lp"></div><div class="nm">PUNIT KUNDU</div>
+<div class="bar"><i id="bi"></i></div>
+<div class="pb" id="pb"><div class="ball red"></div></div>
+<svg class="bat" id="bat" viewBox="0 0 40 130" aria-hidden="true"><rect x="16.5" y="0" width="7" height="42" rx="3.5" fill="#1d1d1d"/><path d="M16.5 8h7M16.5 14h7M16.5 20h7M16.5 26h7" stroke="#555" stroke-width="1.2"/><path d="M20 40C9 46 6 58 6 74v46q0 8 7 8h14q7 0 7-8V74c0-16-3-28-14-34z" fill="#e6c98e"/><path d="M20 44v80" stroke="#c9a766" stroke-width="1.2"/><rect x="13" y="82" width="14" height="18" rx="2" fill="#c9302a" opacity=".85"/></svg>
+<div class="lb"><span id="lt">WARMING UP</span><span id="ln">0</span></div></div>
+
+<nav><b>PUNIT<em>.</em></b><div><a href="#about">Profile</a><a href="#cricket">Field</a><a href="#awards">Awards</a><a href="#projects">Projects</a><a href="#contact">Contact</a></div></nav>
+
+<header class="hero" id="hero">
+<div class="bg"><img src="assets/stadium.jpg" alt="Cricket stadium under floodlights"><i class="gl1"></i><i class="gl2"></i></div>
+<div class="hlab">PROFESSIONAL CRICKETER · FOUNDER · DEVELOPER</div>
+<div class="nm" id="nm"><div class="wd w1" id="w1"></div><div class="wd w2" id="w2"></div></div>
+<div class="me" id="me"><div class="mi" id="mi"><img src="assets/punit-cutout.webp" alt="Punit Kundu"></div></div>
+<div class="lt"><i></i><div><b>PUNIT KUNDU</b><span>FAST BOWLER · HARYANA</span></div></div>
+<div class="sc">SCROLL<i></i></div>
+</header>
+
+<div class="roll rv"><div class="ball red"><i class="sm a"></i><i class="sm b"></i><i class="sm c"></i></div></div>
+
+<section id="about"><div class="wrap">
+<p class="lab rv">Profile</p><h2 class="rv">PUNIT <em>KUNDU</em></h2>
+<div class="pcard rv"><div class="pic"><img src="assets/profile-blazer.jpg" alt="Punit Kundu"></div>
+<div class="fx">
+<div><small>Name</small><span>Punit Kundu</span></div>
+<div><small>From</small><span>Kaithal, Haryana</span></div>
+<div><small>Role</small><span>Fast bowler</span></div>
+<div><small>Company</small><span>Founder, Kundu Naturals</span></div>
+<div><small>Program</small><span>Digital Marketing with AI</span></div>
+<div><small>Institution</small><span>Zed-King Group of Institutions</span></div>
+<div><small>Interests</small><span>Video editing, AI coding</span></div>
+</div></div>
+</div></section>
+
+<section id="cricket"><div class="wrap">
+<p class="lab rv">Match Day</p><h2 class="rv">ON THE <em>FIELD</em></h2>
+<div class="fr rv"><div class="fi"><img src="assets/cricket-batting.jpg" alt="Punit Kundu batting in a match"><div class="beam b1"></div><div class="beam b2"></div><div class="hud t"><i></i>MATCH FEED</div><div class="hud b">HARYANA · CRICKET</div><div class="trk"><span>BALL</span></div><b class="c tl"></b><b class="c tr"></b><b class="c bl"></b><b class="c br"></b></div></div>
+<p class="cap rv">Fast bowler, state-level cricketer. Early mornings, long spells and a lot of discipline.</p>
+<div class="ch rv"><span><div class="ball red"><i class="sm a"></i></div>Under-19</span><span><div class="ball wh"><i class="sm a"></i></div>Under-23</span><span><div class="ball red"><i class="sm a"></i></div>Senior team</span></div>
+</div></section>
+
+<section id="awards"><div class="wrap">
+<p class="lab rv">Career</p><h2 class="rv">AWARDS &amp; <em>CAPS</em></h2>
+<div class="sb rv" id="sb"><div class="sh"><span>REPRESENTATION</span><span>LEVEL</span></div>
+<div class="sr"><b>01</b><div><h4>Haryana Cricket Association</h4><p>Represented Haryana, Under-19</p></div><i>STATE</i></div>
+<div class="sr"><b>02</b><div><h4>Kaithal Men’s Senior Team</h4><p>Represented Kaithal, senior level</p></div><i>SENIOR</i></div>
+<div class="sr"><b>03</b><div><h4>Under-19 Team</h4><p>Represented as a fast bowler</p></div><i>U19</i></div>
+<div class="sr"><b>04</b><div><h4>Under-23 Team</h4><p>Represented as a fast bowler</p></div><i>U23</i></div>
+</div></div></section>
+
+<section id="exp"><div class="wrap">
+<p class="lab rv">Innings</p><h2 class="rv">EXPERI<em>ENCE</em></h2>
+<div class="tl">
+<div class="ti"><div class="ball red"></div><h4>Fast Bowler</h4><p>Haryana Cricket Association · Under-19, Under-23 and Senior level</p></div>
+<div class="ti"><div class="ball wh"></div><h4>Founder</h4><p>Kundu Naturals · organic food brand, e-commerce and brand strategy</p></div>
+<div class="ti"><div class="ball red"></div><h4>AI Application Developer</h4><p>Games, chatbots and web apps built with AI-assisted development</p></div>
+<div class="ti"><div class="ball wh"></div><h4>Video Editor &amp; Content Creator</h4><p>Professional editing for brands, sport and social media</p></div>
+<div class="ti"><div class="ball red"></div><h4>Digital Marketing with AI</h4><p>Zed-King Group of Institutions · currently studying</p></div>
+</div></div></section>
+
+<section id="projects"><div class="wrap">
+<p class="lab rv">Highlights</p><h2 class="rv">PRO<em>JECTS</em></h2>
+<div class="pj rv" data-n="01"><div><small>Brand &amp; E-commerce Website</small><h3>KUNDU NATURALS</h3><p>Responsive e-commerce website for an organic food brand, with a new brand identity, product photography and an online store.</p><a class="bt" href="https://kundu-naturals.vercel.app/" target="_blank" rel="noopener">Visit site →</a></div>
+<a class="shot" href="https://kundu-naturals.vercel.app/" target="_blank" rel="noopener"><img src="assets/project-kundu-naturals.jpg" alt="Kundu Naturals website"></a></div>
+<div class="pj rv" data-n="02"><div><small>AI-Assisted Game Development</small><h3>CLASSIC LUDO GAME</h3><p>Classic Ludo built with AI-assisted development, with AI opponents plus local and online play modes. Presented in class and streamed live on YouTube.</p><a class="bt" href="https://classic-ludo-game.ai.studio/" target="_blank" rel="noopener">Play game →</a></div>
+<a class="shot" href="https://classic-ludo-game.ai.studio/" target="_blank" rel="noopener"><img src="assets/project-ludo.jpg" alt="Classic Ludo Game"></a></div>
+</div></section>
+
+<section id="skills"><div class="wrap">
+<p class="lab rv">Tech Stack</p><h2 class="rv">AI <em>TOOLKIT</em></h2>
+<div class="orb rv" id="orb"><div class="core">AI</div><div class="or o1" id="o1"></div><div class="or o2" id="o2"></div></div>
+<p class="lab rv" style="margin-top:80px">Capabilities</p><h2 class="rv">SKILLS</h2>
+<div class="fl2 rv" id="fl"></div><div class="cloud rv" id="cl"></div>
+</div></section>
+
+<section id="contact" class="ct"><div class="wrap">
+<p class="lab rv">Get in touch</p><h2 class="rv">LET’S <em>PLAY</em></h2>
+<p class="rv">Open to brand work, video, websites and AI projects. Kaithal, Haryana, India.</p>
+<div class="soc rv"><a href="https://mail.google.com/mail/?view=cm&fs=1&to=kundupunit927@gmail.com&su=Hello%20Punit" target="_blank" rel="noopener" aria-label="Email"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M2 7l5 3.6V20H3.8A1.8 1.8 0 012 18.2z"/><path fill="#34A853" d="M22 7l-5 3.6V20h3.2a1.8 1.8 0 001.8-1.8z"/><path fill="#EA4335" d="M2 5.8L7 9.6v1L12 14l5-3.4v-1l5-3.8V5.8A1.8 1.8 0 0020.2 4h-.8L12 9.4 4.6 4h-.8A1.8 1.8 0 002 5.8z"/><path fill="#FBBC04" d="M17 9.6v1l5-3.6V5.8z"/><path fill="#C5221F" d="M2 5.8V7l5 3.6v-1z"/></svg></a><a href="https://www.linkedin.com/in/punit-kundu-9362ab43a" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#0A66C2"/><path fill="#fff" d="M6.1 9.6h2.5v8H6.1zM7.35 5.7a1.45 1.45 0 110 2.9 1.45 1.45 0 010-2.9zM10.3 9.6h2.4v1.1h.04c.33-.63 1.15-1.3 2.36-1.3 2.52 0 2.98 1.66 2.98 3.8v4.4h-2.5v-3.9c0-.93-.02-2.13-1.3-2.13-1.3 0-1.5 1.01-1.5 2.06v3.97h-2.5z"/></svg></a></div>
+<div class="em rv"><span id="ea">kundupunit927@gmail.com</span><button id="cp" type="button">COPY</button></div>
+</div></section>
+<footer>© 2026 PUNIT KUNDU · ALL RIGHTS RESERVED</footer>
+
+<script>
+(function(){
+var rd=matchMedia('(prefers-reduced-motion:reduce)').matches;
+/* loader */
+var lp=document.getElementById('lp');for(var i=0;i<6;i++){var bl=document.createElement('div');bl.className='ball '+(i%2?'wh':'red');lp.appendChild(bl)}
+var ld=document.getElementById('ld'),bi=document.getElementById('bi'),ln=document.getElementById('ln'),lt=document.getElementById('lt'),pb=document.getElementById('pb'),n=0;
+function done(){ld.classList.add('out');document.body.classList.remove('lock');document.body.classList.add('live')}
+var iv=setInterval(function(){n+=rd?100:Math.max(1,Math.round(Math.random()*4));if(n>100)n=100;bi.style.width=n+'%';ln.textContent=n;
+pb.style.left=(22+n/100*(innerWidth-100)-15)+'px';pb.firstChild.style.transform='rotate('+n*9+'deg)';
+[].forEach.call(lp.children,function(l,k){if(n>=(k+1)*16)l.classList.add('on')});
+if(n>=90)lt.textContent='PLAY';
+if(n>=100){clearInterval(iv);ld.classList.add('hit');setTimeout(done,rd?0:1500)}},rd?1:55);
+/* hero */
+var hero=document.getElementById('hero'),me=document.getElementById('me'),mi=document.getElementById('mi'),nm=document.getElementById('nm'),w1=document.getElementById('w1'),w2=document.getElementById('w2');
+function letters(el,s,o){el.innerHTML=s.split('').map(function(c,i){return '<span class="lo" style="--i:'+(i+o)+'"><span class="l" style="--i:'+(i+o)+'">'+c+'</span></span>'}).join('')}
+letters(w1,'PUNIT',0);letters(w2,'KUNDU',5);
+var HW,HH;
+function lay(){HW=hero.clientWidth;HH=hero.clientHeight;var mob=HW<600,pw,ph,g,fs,ho;
+if(mob){pw=Math.min(HW*.82,HH*.66,560);fs=(HW/2-8)/2.17;g=fs*.2;ho=-fs*.15}
+else{pw=Math.min(HW*.74,HH*.62,560);g=pw*.4;fs=Math.min(270,(HW-g)/2/2.07*.96);ho=-.02*pw}
+ph=pw*894/760;
+me.style.setProperty('--pw',pw+'px');hero.style.setProperty('--g',g+'px');hero.style.setProperty('--fs',fs+'px');hero.style.setProperty('--ho',ho+'px');
+var sd=(HW-g)/2-8,mw=Math.max(w1.scrollWidth,w2.scrollWidth);
+if(!mob&&mw>sd){fs*=sd/mw;hero.style.setProperty('--fs',fs+'px')}
+if(mob){var a=w1.scrollWidth,b=w2.scrollWidth,tw=a+b+g,k=Math.min(1.12,(HW-16)/tw);fs*=k;a*=k;b*=k;g=fs*.2;ho=-(b-a)/2;hero.style.setProperty('--fs',fs+'px');hero.style.setProperty('--g',g+'px');hero.style.setProperty('--ho',ho+'px')}
+nm.style.top=(mob?(HH-ph-fs*.14):(HH-ph+ph*.2))+'px'}
+lay();addEventListener('resize',lay);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(lay);
+var px=0,py=0,cx=0,cy=0;
+addEventListener('pointermove',function(e){px=e.clientX/innerWidth-.5;py=e.clientY/innerHeight-.5});
+function frame(){cx+=(px-cx)*.06;cy+=(py-cy)*.06;
+mi.style.transform='rotateY('+cx*7+'deg) rotateX('+-cy*3+'deg) translateX('+cx*10+'px)';
+nm.style.transform='translateX('+(-cx*18)+'px)';
+if(!rd)requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+/* reveal */
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var el=e.target;
+if(el.id==='sb'){var k=0;el.querySelectorAll('.sr').forEach(function(r){setTimeout(function(){r.classList.add('in')},k*220);k++})}
+el.classList.add('in');io.unobserve(el)}})},{threshold:.15});
+document.querySelectorAll('.rv,.ti').forEach(function(e){io.observe(e)});
+/* skills */
+var C={all:['All',''],crk:['Cricket','#ff7b72'],ai:['AI Tools','#e8c872'],dev:['Development','#8fd0ff'],mk:['Marketing & Video','#9ad7b5'],bz:['Business','#dfe6f2']};
+var K=[['Fast Bowling','crk',26],['Swing Bowling','crk',17],['Seam Movement','crk',14],['Fitness & Conditioning','crk',14],['Match Awareness','crk',13],['Team Play','crk',13],
+['Claude','ai',24],['ChatGPT','ai',22],['Gemini','ai',22],['Higgsfield','ai',18],['OpenArt','ai',18],['Pixverse','ai',17],['Google AI Studio','ai',19],['HeyGen','ai',15],['Prompt Engineering','ai',21],['Generative AI','ai',17],
+['AI-Assisted Development','dev',23],['Vibe Coding','dev',18],['Web Development','dev',20],['Responsive UI','dev',14],['API Integration','dev',16],['Groq API','dev',13],['Chatbot Development','dev',17],['Game Development','dev',17],['Replit','dev',13],['Vercel','dev',13],['GitHub','dev',15],['VS Code','dev',13],['Kilo Code','dev',12],
+['Digital Marketing','mk',23],['SEO','mk',15],['Social Media Marketing','mk',16],['Content Strategy','mk',14],['Video Editing','mk',24],['YouTube Growth','mk',14],['Brand Storytelling','mk',14],
+['Brand Building','bz',21],['E-commerce','bz',17],['Organic Food Business','bz',16],['Product Photography','bz',13],['Leadership','bz',14]];
+var fl=document.getElementById('fl'),cl=document.getElementById('cl');
+Object.keys(C).forEach(function(k){var b=document.createElement('button');b.innerHTML=(C[k][1]?'<i style="--c:'+C[k][1]+'"></i>':'')+C[k][0];if(k==='all')b.className='on';b.onclick=function(){[].forEach.call(fl.children,function(c){c.classList.remove('on')});b.classList.add('on');[].forEach.call(cl.children,function(s){s.classList.toggle('off',k!=='all'&&s.dataset.c!==k)})};fl.appendChild(b)});
+K.sort(function(){return Math.random()-.5}).forEach(function(s){var e=document.createElement('span');e.textContent=s[0];e.dataset.c=s[1];e.style.cssText='--c:'+C[s[1]][1]+';font-size:'+s[2]+'px';cl.appendChild(e)});
+/* orbit */
+var orb=document.getElementById('orb'),S0;function sz(){S0=Math.min(340,innerWidth-48);orb.style.setProperty('--S',S0+'px')}
+var T1=[['Claude','Cl','#d97757'],['ChatGPT','GPT','#10a37f'],['Gemini','Ge','linear-gradient(135deg,#4285f4,#a142f4)'],['Higgsfield','Hf','#1b1b1b'],['OpenArt','OA','#e8458b'],['Pixverse','Px','#7c4dff']];
+var T2=[['AI Studio','AIS','#1a73e8'],['HeyGen','He','#6a4cff'],['Replit','Rp','#f26207'],['Groq','Gq','#f55036'],['Vercel','▲','#000'],['GitHub','Gh','#2b3137'],['VS Code','VS','#007acc']];
+function ring(el,arr,rf){arr.forEach(function(d,i){var c=document.createElement('div');c.className='oc';c.dataset.rf=rf;c.style.setProperty('--a',(i*360/arr.length)+'deg');c.innerHTML='<div class="ci" style="--bg:'+d[2]+'">'+d[1]+'<small>'+d[0]+'</small></div>';el.appendChild(c)})}
+ring(document.getElementById('o1'),T1,.29);ring(document.getElementById('o2'),T2,.45);
+function place(){sz();[].forEach.call(document.querySelectorAll('.oc'),function(c){c.style.setProperty('--rr',(S0*c.dataset.rf)+'px')})}place();addEventListener('resize',place);
+/* copy */
+var cp=document.getElementById('cp');cp.onclick=function(){var s=document.getElementById('ea').textContent,ok=function(){cp.textContent='COPIED';setTimeout(function(){cp.textContent='COPY'},1800)};
+function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById('ea'));var g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');ok()}catch(e){}}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,fb)}else fb()};
+})();
+</script>
+</body>
+</html>
