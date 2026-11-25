@@ -188,7 +188,7 @@ footer{padding:26px 0 40px;text-align:center;font:400 10px var(--mono);letter-sp
 <div class="bar"><i id="bi"></i></div>
 <div class="pb" id="pb"><div class="ball red"></div></div>
 <svg class="bat" id="bat" viewBox="0 0 40 130" aria-hidden="true"><rect x="16.5" y="0" width="7" height="42" rx="3.5" fill="#1d1d1d"/><path d="M16.5 8h7M16.5 14h7M16.5 20h7M16.5 26h7" stroke="#555" stroke-width="1.2"/><path d="M20 40C9 46 6 58 6 74v46q0 8 7 8h14q7 0 7-8V74c0-16-3-28-14-34z" fill="#e6c98e"/><path d="M20 44v80" stroke="#c9a766" stroke-width="1.2"/><rect x="13" y="82" width="14" height="18" rx="2" fill="#c9302a" opacity=".85"/></svg>
-<div class="lb"><span id="lt">WARMING UP</span><span id="ln">0</span></div></div>
+<div class="lb"><span id="lt">WARMING UP</span><span id="ln">0</span></div><button id="skipLd" style="position:absolute;bottom:8%;right:22px;z-index:50;background:var(--red);color:#fff;border:none;padding:10px 18px;border-radius:4px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;display:none">SKIP</button></div>
 
 <nav><b>PUNIT<em>.</em></b><div><a href="#about">Profile</a><a href="#cricket">Field</a><a href="#awards">Awards</a><a href="#projects">Projects</a><a href="#contact">Contact</a></div></nav>
 
@@ -271,13 +271,16 @@ footer{padding:26px 0 40px;text-align:center;font:400 10px var(--mono);letter-sp
 var rd=matchMedia('(prefers-reduced-motion:reduce)').matches;
 /* loader */
 var lp=document.getElementById('lp');for(var i=0;i<6;i++){var bl=document.createElement('div');bl.className='ball '+(i%2?'wh':'red');lp.appendChild(bl)}
-var ld=document.getElementById('ld'),bi=document.getElementById('bi'),ln=document.getElementById('ln'),lt=document.getElementById('lt'),pb=document.getElementById('pb'),n=0;
+var ld=document.getElementById('ld'),bi=document.getElementById('bi'),ln=document.getElementById('ln'),lt=document.getElementById('lt'),pb=document.getElementById('pb'),n=0,sk=document.getElementById('skipLd');
 function done(){ld.classList.add('out');document.body.classList.remove('lock');document.body.classList.add('live')}
-var iv=setInterval(function(){n+=rd?100:Math.max(1,Math.round(Math.random()*4));if(n>100)n=100;bi.style.width=n+'%';ln.textContent=n;
+sk.onclick=function(){clearInterval(iv);clearTimeout(safety);done()};
+var iv=setInterval(function(){n+=25;if(n>100)n=100;bi.style.width=n+'%';ln.textContent=n;
 pb.style.left=(22+n/100*(innerWidth-100)-15)+'px';pb.firstChild.style.transform='rotate('+n*9+'deg)';
 [].forEach.call(lp.children,function(l,k){if(n>=(k+1)*16)l.classList.add('on')});
+if(n>=50)sk.style.display='';
 if(n>=90)lt.textContent='PLAY';
-if(n>=100){clearInterval(iv);ld.classList.add('hit');setTimeout(done,rd?0:1500)}},rd?1:55);
+if(n>=100){clearInterval(iv);ld.classList.add('hit');setTimeout(done,300)}},40);
+var safety=setTimeout(function(){clearInterval(iv);done()},3000);
 /* hero */
 var hero=document.getElementById('hero'),me=document.getElementById('me'),mi=document.getElementById('mi'),nm=document.getElementById('nm'),w1=document.getElementById('w1'),w2=document.getElementById('w2');
 function letters(el,s,o){el.innerHTML=s.split('').map(function(c,i){return '<span class="lo" style="--i:'+(i+o)+'"><span class="l" style="--i:'+(i+o)+'">'+c+'</span></span>'}).join('')}
@@ -326,6 +329,95 @@ function place(){sz();[].forEach.call(document.querySelectorAll('.oc'),function(
 var cp=document.getElementById('cp');cp.onclick=function(){var s=document.getElementById('ea').textContent,ok=function(){cp.textContent='COPIED';setTimeout(function(){cp.textContent='COPY'},1800)};
 function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById('ea'));var g=getSelection();g.removeAllRanges();g.addRange(r);try{document.execCommand('copy');ok()}catch(e){}}
 if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(ok,fb)}else fb()};
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script>
+(function(){
+  if(!window.SUPABASE_URL||window.SUPABASE_URL.includes('YOUR_PROJECT'))return;
+  var sb=supabaseClient.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  var $=function(s){return document.querySelector(s);};
+  var $$=function(s){return Array.from(document.querySelectorAll(s));};
+  function esc(x){return x==null?'':String(x);}
+  function set(el,html){if(el)el.innerHTML=html;}
+
+  Promise.all([
+    sb.from('profiles').select('*').limit(1),
+    sb.from('projects').select('*').order('display_order',{ascending:true}),
+    sb.from('skills').select('*'),
+    sb.from('awards').select('*').order('display_order',{ascending:true}),
+    sb.from('experience').select('*').order('display_order',{ascending:true})
+  ]).then(function(r){
+    var prof=r[0].data&&r[0].data[0];
+    var projects=r[1].data||[];
+    var skills=r[2].data||[];
+    var awards=r[3].data||[];
+    var experience=r[4].data||[];
+
+    // Profile
+    if(prof){
+      var h2=$('#about h2');
+      if(h2){var nm=esc(prof.name||'Punit Kundu'),parts=nm.split(' ');set(h2,parts[0]+' <em>'+(parts[1]||'Kundu')+'</em>');}
+      var map={'Name':prof.name,'From':prof.from_location,'Role':prof.role,'Company':prof.company,'Program':prof.program,'Institution':prof.institution,'Interests':prof.interests};
+      $$('#about .fx div').forEach(function(d){
+        var sm=d.querySelector('small'),sp=d.querySelector('span');
+        if(sm&&sp&&map[sm.textContent]!==undefined)sp.textContent=esc(map[sm.textContent]);
+      });
+      var ea=$('#ea');if(ea&&prof.email)ea.textContent=esc(prof.email);
+    }
+
+    // Projects
+    var projWrap=$('#projects .wrap');
+    if(projWrap&&projects.length){
+      $$('#projects .pj').forEach(function(el){el.remove();});
+      var lab=projWrap.querySelector('.lab');
+      projects.forEach(function(p,i){
+        var el=document.createElement('div');
+        el.className='pj rv';
+        el.setAttribute('data-n',String(i+1));
+        el.innerHTML='<div><small>'+esc(p.category)+'</small><h3>'+esc(p.title)+'</h3><p>'+esc(p.description)+'</p><a class="bt" href="'+esc(p.link_url)+'" target="_blank" rel="noopener">Visit site →</a></div><a class="shot" href="'+esc(p.link_url)+'" target="_blank" rel="noopener"><img src="'+esc(p.image_url)+'" alt="'+esc(p.title)+'"></a>';
+        projWrap.insertBefore(el,lab.nextSibling);
+      });
+    }
+
+    // Awards
+    var sbEl=$('#sb');
+    if(sbEl&&awards.length){
+      $$('#sb .sr').forEach(function(el){el.remove();});
+      awards.forEach(function(a,i){
+        var el=document.createElement('div');
+        el.className='sr rv';
+        el.innerHTML='<b>'+(a.display_order||i+1)+'</b><div><h4>'+esc(a.title)+'</h4><p>'+esc(a.description)+'</p></div><i>'+esc(a.level)+'</i>';
+        sbEl.appendChild(el);
+      });
+    }
+
+    // Experience
+    var tl=$('#exp .tl');
+    if(tl&&experience.length){
+      $$('#exp .ti').forEach(function(el){el.remove();});
+      experience.forEach(function(x,i){
+        var el=document.createElement('div');
+        el.className='ti rv';
+        el.innerHTML='<div class="ball '+esc(x.ball_color)+'"></div><h4>'+esc(x.title)+'</h4><p>'+esc(x.description)+'</p>';
+        tl.appendChild(el);
+      });
+    }
+
+    // Skills cloud
+    var cl=$('#cl');
+    if(cl&&skills.length){
+      $$('#cl span').forEach(function(el){el.remove();});
+      skills.forEach(function(s){
+        var e=document.createElement('span');
+        e.textContent=esc(s.name);
+        e.dataset.c=s.category||'';
+        e.style.cssText='--c:'+esc(s.color||'#e8c872')+';font-size:'+(s.size||20)+'px';
+        cl.appendChild(e);
+      });
+    }
+  }).catch(function(){});
 })();
 </script>
 </body>
