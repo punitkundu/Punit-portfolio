@@ -1,641 +1,162 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Punit Kundu Portfolio — Admin</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/supabase-config.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin - Punit Kundu</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg:#050f0a; --pn:#0a1c13; --ln:#1b3d2b; --g:#0f4a2c;
-  --red:#c9302a; --red2:#ef5a50; --gold:#dbb96b; --iv:#f4f1e8;
-  --tx:#eef3ef; --mu:#8fa398; --mono:'JetBrains Mono',ui-monospace,monospace;
-  --bb:'Bebas Neue',Impact,sans-serif;
-}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--tx);font:400 15px/1.6 Inter,system-ui,sans-serif;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-button{cursor:pointer;font:inherit;background:none;border:none;color:inherit}
-input,textarea,select{background:var(--pn);border:1px solid var(--ln);color:var(--tx);padding:8px 12px;border-radius:4px;font:inherit;width:100%}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--gold)}
-.wrap{max-width:1200px;margin:0 auto;padding:0 22px}
-.lab{font:500 11px var(--mono);letter-spacing:.3em;color:var(--gold);text-transform:uppercase;margin:0 0 8px}
-h2{font:400 clamp(30px,6vw,48px)/.95 var(--bb);letter-spacing:.02em;margin:0 0 20px}
-.bt{display:inline-block;background:var(--red);color:#fff;padding:10px 20px;font:500 11px var(--mono);letter-spacing:.18em;text-transform:uppercase;border-radius:3px;border:none;cursor:pointer}
-.bt:hover{background:var(--red2)}
-.bt.secondary{background:transparent;border:1px solid var(--ln);color:var(--tx)}
-.bt.secondary:hover{border-color:var(--gold)}
-.bt.danger{background:transparent;border:1px solid #5a2220;color:#ef5a50}
-.bt.danger:hover{background:rgba(239,90,80,.15)}
-.bt.small{padding:6px 12px;font-size:10px}
-.table-wrap{overflow:auto;border:1px solid var(--ln);border-radius:6px;margin:16px 0;background:var(--pn)}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--ln);vertical-align:middle}
-th{background:#0e2a1c;color:var(--gold);font:500 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;position:sticky;top:0;z-index:2}
-tr:hover{background:rgba(255,240,190,.04)}
-.badge{display:inline-block;padding:2px 8px;border-radius:99px;font:500 9px var(--mono);background:var(--ln);color:var(--mu)}
-.badge.ai{background:#1b3d2b;color:#e8c872}
-.badge.dev{background:#1b3d2b;color:#8fd0ff}
-.badge.mk{background:#1b3d2b;color:#9ad7b5}
-.badge.bz{background:#1b3d2b;color:#dfe6f2}
-.badge.crk{background:#1b3d2b;color:#ff7b72}
-.msg{padding:10px 14px;border-radius:4px;margin:12px 0;font-size:13px;display:none}
-.msg.ok{background:rgba(154,215,181,.15);border:1px solid #9ad7b5;color:#b9e3c9}
-.msg.err{background:rgba(90,34,32,.25);border:1px solid #5a2220;color:#ef5a50}
-.msg.show{display:block}
-
-/* Layout */
-.app{display:flex;height:100vh;overflow:hidden}
-aside{width:260px;background:var(--pn);border-right:1px solid var(--ln);display:flex;flex-direction:column;z-index:10;flex-shrink:0}
-aside .brand{padding:18px 20px;border-bottom:1px solid var(--ln);font:400 20px var(--bb);letter-spacing:.06em}
-aside .brand em{font-style:normal;color:var(--red2)}
-aside nav{flex:1;padding:12px;overflow-y:auto}
-aside nav a{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:6px;color:var(--mu);font:400 12px var(--mono);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
-aside nav a:hover{background:var(--ln);color:var(--tx)}
-aside nav a.active{background:var(--g);color:#fff}
-aside .logout{padding:14px 20px;border-top:1px solid var(--ln)}
-main{flex:1;overflow:auto;padding:24px;position:relative}
-main section{display:none}
-main section.active{display:block}
-header.appbar{position:sticky;top:0;z-index:20;background:linear-gradient(#050f0aee,transparent);padding:12px 0;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
-.user{font:400 11px var(--mono);color:var(--mu);letter-spacing:.1em;text-transform:uppercase}
-
-/* Forms */
-.form{background:var(--pn);border:1px solid var(--ln);border-radius:6px;padding:22px;margin:16px 0;max-width:700px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.form-group{display:flex;flex-direction:column;gap:6px}
-.form-group label{font:400 10px var(--mono);letter-spacing:.16em;color:var(--mu);text-transform:uppercase}
-textarea{resize:vertical;min-height:90px}
-.row-actions{display:flex;gap:10px;margin-top:12px}
-.card{background:var(--pn);border:1px solid var(--ln);border-radius:6px;padding:16px;margin:12px 0}
-.empty{color:var(--mu);font:400 11px var(--mono);letter-spacing:.1em;padding:20px;text-align:center}
-
-/* Auth */
-.auth-screen{display:flex;align-items:center;justify-content:center;height:100vh}
-.auth-card{background:var(--pn);border:1px solid var(--ln);border-radius:6px;padding:34px 30px;width:100%;max-width:400px}
-.auth-card h1{font:400 34px var(--bb);letter-spacing:.02em;margin:0 0 8px}
-.auth-card p{color:var(--mu);font-size:12px;margin-bottom:22px}
-.auth-group{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
-.auth-group label{font:400 10px var(--mono);letter-spacing:.16em;color:var(--mu);text-transform:uppercase}
-
-/* Responsive */
-@media(max-width:768px){.app{flex-direction:column;height:auto}aside{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--ln)}main{padding:16px}}
+:root{--bg:#0d1420;--card:#16202f;--line:#2a3750;--txt:#e8e4dc;--mut:#8e9bb0;--cu:#c8854a;--red:#d9534f}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--txt)}
+[hidden]{display:none!important}
+.box{max-width:380px;margin:12vh auto;padding:28px;background:var(--card);border:1px solid var(--line);border-radius:14px}
+h1,h2{margin:0 0 14px;color:var(--cu)}
+input,textarea,select,button{font:inherit;width:100%;padding:10px 12px;margin:6px 0 12px;border-radius:8px;border:1px solid var(--line);background:#0f1826;color:var(--txt)}
+textarea{min-height:90px;resize:vertical}
+button{background:var(--cu);color:#1a1209;font-weight:700;border:0;cursor:pointer;width:auto;padding:10px 18px;margin:0}
+button.sec{background:transparent;color:var(--txt);border:1px solid var(--line)}
+button.del{background:var(--red);color:#fff}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line)}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px}
+nav button{background:transparent;color:var(--txt);border:1px solid var(--line)}
+nav button.on{background:var(--cu);color:#1a1209}
+main{max-width:900px;margin:0 auto;padding:0 20px 60px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}.row small{color:var(--mut);display:block;margin-top:4px;word-break:break-word}
+.row .act{display:flex;gap:8px;flex-shrink:0}
+label{font-size:13px;color:var(--mut)}
+img.pv{max-width:140px;border-radius:8px;display:block;margin-bottom:8px}
+#msg{color:var(--mut);min-height:20px;margin-bottom:8px}
 </style>
 </head>
-<body class="lock">
+<body>
 
-<div class="auth-screen" id="authScreen">
-  <div class="auth-card">
-    <h1>PUNIT<em style="font-style:normal;color:var(--red2)">.</em> ADMIN</h1>
-    <p>Sign in to manage portfolio content.</p>
-    <div class="auth-group">
-      <label>Email</label>
-      <input type="email" id="authEmail" placeholder="admin@example.com" required>
-    </div>
-    <div class="auth-group">
-      <label>Password</label>
-      <input type="password" id="authPassword" placeholder="••••••••" required>
-    </div>
-    <button class="bt" id="authBtn">Sign in</button>
-    <div id="authMsg" class="msg err"></div>
-    <p style="margin-top:14px;font:400 10px var(--mono);color:var(--mu);letter-spacing:.1em;text-align:center">
-      Create the first user in Supabase Authentication -> Users, then sign in here.
-    </p>
-  </div>
+<div id="login" class="box" hidden>
+  <h1>Admin Login</h1>
+  <label>Email</label><input id="em" type="email" autocomplete="username">
+  <label>Password</label><input id="pw" type="password" autocomplete="current-password">
+  <button id="lbtn">Login</button>
+  <div id="lerr" style="color:var(--red);margin-top:10px"></div>
 </div>
 
-<div class="app" id="adminApp" style="display:none">
-  <aside>
-    <div class="brand">PUNIT<em>.</em> ADMIN</div>
-    <nav>
-      <a href="#profile" data-tab="profile" class="nav-link active">Profile</a>
-      <a href="#projects" data-tab="projects" class="nav-link">Projects</a>
-      <a href="#skills" data-tab="skills" class="nav-link">Skills</a>
-      <a href="#awards" data-tab="awards" class="nav-link">Awards</a>
-      <a href="#experience" data-tab="experience" class="nav-link">Experience</a>
-    </nav>
-    <div class="logout"><button class="bt secondary" id="logoutBtn">Sign out</button></div>
-  </aside>
+<div id="app" hidden>
+  <header><strong>Punit Kundu - Admin</strong><button class="sec" id="out">Logout</button></header>
+  <nav id="nav"></nav>
   <main>
-    <div class="appbar">
-      <div><p class="lab">Portfolio Admin</p><h2 id="pageTitle">Profile</h2></div>
-      <div class="user" id="currentUser"></div>
-    </div>
-
-    <!-- Profile -->
-    <section id="tab-profile" class="active">
-      <p class="lab">Profile</p><h2>Profile</h2>
-      <div class="msg" id="profileMsg"></div>
-      <form class="form" id="profileForm">
-        <div class="form-grid">
-          <div class="form-group"><label>Name</label><input type="text" id="pfName" required></div>
-          <div class="form-group"><label>Role</label><input type="text" id="pfRole" required></div>
-          <div class="form-group"><label>From</label><input type="text" id="pfFrom" required></div>
-          <div class="form-group"><label>Company</label><input type="text" id="pfCompany" required></div>
-          <div class="form-group"><label>Program</label><input type="text" id="pfProgram" required></div>
-          <div class="form-group"><label>Institution</label><input type="text" id="pfInstitution" required></div>
-          <div class="form-group"><label>Interests</label><input type="text" id="pfInterests" required></div>
-          <div class="form-group"><label>Email</label><input type="email" id="pfEmail" required></div>
-        </div>
-        <div class="row-actions"><button class="bt" type="submit">Save Profile</button></div>
-      </form>
-    </section>
-
-    <!-- Projects -->
-    <section id="tab-projects">
-      <p class="lab">Projects</p><h2>Projects</h2>
-      <div class="msg" id="projectsMsg"></div>
-      <div class="row-actions" style="margin-bottom:12px">
-        <button class="bt" id="addProjectBtn">+ Add Project</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Title</th><th>Category</th><th>Description</th><th>Image</th><th>Link</th><th>Order</th><th>Actions</th></tr></thead>
-          <tbody id="projectsBody"></tbody>
-        </table>
-      </div>
-      <div class="card" id="projectEditor" style="display:none">
-        <p class="lab" style="margin-bottom:4px">Project</p><h3 style="font:400 22px var(--bb);margin-bottom:12px" id="projEditorTitle">New Project</h3>
-        <form id="projectForm">
-          <input type="hidden" id="projId">
-          <div class="form-grid">
-            <div class="form-group"><label>Title</label><input type="text" id="projTitle" required></div>
-            <div class="form-group"><label>Category</label><input type="text" id="projCategory" placeholder="e.g. Brand &amp; E-commerce"></div>
-            <div class="form-group"><label>Description</label><textarea id="projDesc" required></textarea></div>
-            <div class="form-group"><label>Image URL</label><input type="url" id="projImage" placeholder="assets/project-x.jpg"></div>
-            <div class="form-group"><label>Link URL</label><input type="url" id="projLink" placeholder="https://..."></div>
-            <div class="form-group"><label>Display order</label><input type="number" id="projOrder" value="0"></div>
-          </div>
-          <div class="row-actions">
-            <button class="bt" type="submit">Save Project</button>
-            <button class="bt secondary" type="button" id="cancelProject">Cancel</button>
-            <button class="bt danger small" type="button" id="deleteProject" style="display:none">Delete</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Skills -->
-    <section id="tab-skills">
-      <p class="lab">Skills</p><h2>Skills</h2>
-      <div class="msg" id="skillsMsg"></div>
-      <div class="row-actions" style="margin-bottom:12px">
-        <button class="bt" id="addSkillBtn">+ Add Skill</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Name</th><th>Category</th><th>Size</th><th>Color</th><th>Actions</th></tr></thead>
-          <tbody id="skillsBody"></tbody>
-        </table>
-      </div>
-      <div class="card" id="skillEditor" style="display:none">
-        <p class="lab" style="margin-bottom:4px">Skill</p><h3 style="font:400 22px var(--bb);margin-bottom:12px" id="skillEditorTitle">New Skill</h3>
-        <form id="skillForm">
-          <input type="hidden" id="skillId">
-          <div class="form-grid">
-            <div class="form-group"><label>Name</label><input type="text" id="skillName" required></div>
-            <div class="form-group"><label>Category</label>
-              <select id="skillCategory" required>
-                <option value="crk">Cricket</option>
-                <option value="ai">AI Tools</option>
-                <option value="dev">Development</option>
-                <option value="mk">Marketing &amp; Video</option>
-                <option value="bz">Business</option>
-              </select>
-            </div>
-            <div class="form-group"><label>Size (px)</label><input type="number" id="skillSize" value="20" min="8" max="40"></div>
-            <div class="form-group"><label>Color (hex)</label><input type="text" id="skillColor" placeholder="#e8c872"></div>
-          </div>
-          <div class="row-actions">
-            <button class="bt" type="submit">Save Skill</button>
-            <button class="bt secondary" type="button" id="cancelSkill">Cancel</button>
-            <button class="bt danger small" type="button" id="deleteSkill" style="display:none">Delete</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Awards -->
-    <section id="tab-awards">
-      <p class="lab">Awards</p><h2>Awards &amp; Caps</h2>
-      <div class="msg" id="awardsMsg"></div>
-      <div class="row-actions" style="margin-bottom:12px">
-        <button class="bt" id="addAwardBtn">+ Add Award</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>#</th><th>Title</th><th>Level</th><th>Description</th><th>Order</th><th>Actions</th></tr></thead>
-          <tbody id="awardsBody"></tbody>
-        </table>
-      </div>
-      <div class="card" id="awardEditor" style="display:none">
-        <p class="lab" style="margin-bottom:4px">Award</p><h3 style="font:400 22px var(--bb);margin-bottom:12px" id="awardEditorTitle">New Award</h3>
-        <form id="awardForm">
-          <input type="hidden" id="awardId">
-          <div class="form-grid">
-            <div class="form-group"><label>Title</label><input type="text" id="awardTitle" required></div>
-            <div class="form-group"><label>Level</label><input type="text" id="awardLevel" placeholder="e.g. STATE"></div>
-            <div class="form-group"><label>Description</label><textarea id="awardDesc"></textarea></div>
-            <div class="form-group"><label>Display order</label><input type="number" id="awardOrder" value="0"></div>
-          </div>
-          <div class="row-actions">
-            <button class="bt" type="submit">Save Award</button>
-            <button class="bt secondary" type="button" id="cancelAward">Cancel</button>
-            <button class="bt danger small" type="button" id="deleteAward" style="display:none">Delete</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- Experience -->
-    <section id="tab-experience">
-      <p class="lab">Experience</p><h2>Experience / Innings</h2>
-      <div class="msg" id="experienceMsg"></div>
-      <div class="row-actions" style="margin-bottom:12px">
-        <button class="bt" id="addExperienceBtn">+ Add Experience</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Title</th><th>Description</th><th>Ball color</th><th>Order</th><th>Actions</th></tr></thead>
-          <tbody id="experienceBody"></tbody>
-        </table>
-      </div>
-      <div class="card" id="experienceEditor" style="display:none">
-        <p class="lab" style="margin-bottom:4px">Experience</p><h3 style="font:400 22px var(--bb);margin-bottom:12px" id="experienceEditorTitle">New Experience</h3>
-        <form id="experienceForm">
-          <input type="hidden" id="expId">
-          <div class="form-grid">
-            <div class="form-group"><label>Title</label><input type="text" id="expTitle" required></div>
-            <div class="form-group"><label>Description</label><textarea id="expDesc" required></textarea></div>
-            <div class="form-group"><label>Ball color</label>
-              <select id="expColor"><option value="red">Red</option><option value="wh">White</option></select>
-            </div>
-            <div class="form-group"><label>Display order</label><input type="number" id="expOrder" value="0"></div>
-          </div>
-          <div class="row-actions">
-            <button class="bt" type="submit">Save Experience</button>
-            <button class="bt secondary" type="button" id="cancelExperience">Cancel</button>
-            <button class="bt danger small" type="button" id="deleteExperience" style="display:none">Delete</button>
-          </div>
-        </form>
-      </div>
-    </section>
-
+    <div id="msg"></div>
+    <div class="card" id="formCard" hidden><h2 id="ftitle"></h2><div id="fields"></div>
+      <button id="save">Save</button> <button class="sec" id="cancel">Cancel</button></div>
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="ltitle" style="margin:0"></h2><button id="add">+ Add new</button></div>
+      <div id="list"></div></div>
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-(function(){
-  if(!window.SUPABASE_URL || window.SUPABASE_URL.includes('YOUR_PROJECT')){
-    document.getElementById('authMsg').textContent = 'Configure js/supabase-config.js with your Supabase URL and anon key.';
-    document.getElementById('authMsg').classList.add('show','err');
-  }
-  const supabase = supabaseClient.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY);
+// ====== STEP 1: apni Supabase details yahan daalo (Project Settings > API) ======
+const SUPABASE_URL = 'https://jfkwbegzgjojypflcefx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impma3diZWd6Z2pvanlwZmxjZWZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU0OTMzMDQsImV4cCI6MjExMTA2OTMwNH0.-Xrxu82pnSYD8CC-Dul1Djx7rz6Qyno5pQ0FkgYira4';
+// ================================================================================
 
-  const authScreen = document.getElementById('authScreen');
-  const adminApp = document.getElementById('adminApp');
-  const authBtn = document.getElementById('authBtn');
-  const authEmail = document.getElementById('authEmail');
-  const authPassword = document.getElementById('authPassword');
-  const authMsg = document.getElementById('authMsg');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const currentUserEl = document.getElementById('currentUser');
-  const pageTitle = document.getElementById('pageTitle');
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-  function show(msgEl,text,type){msgEl.textContent=text;msgEl.className='msg '+type+' show';}
-  function hide(msgEl){msgEl.className='msg';}
+// field = [column, label, type]
+const T = {
+  profiles:{label:'Profile',title:'name',sub:'role',order:'name',f:[['name','Name'],['from_location','From'],['role','Role'],['company','Company'],['program','Program'],['institution','Institution'],['interests','Interests'],['email','Email']]},
+  projects:{label:'Projects',title:'title',sub:'description',order:'display_order',f:[['category','Category'],['title','Title'],['description','Description','textarea'],['link_url','Link (URL)'],['image_url','Image','image'],['display_order','Order (1,2,3...)','number']]},
+  experience:{label:'Experience',title:'title',sub:'description',order:'display_order',f:[['title','Title'],['description','Description','textarea'],['ball_color','Ball color','select',['red','wh']],['display_order','Order','number']]},
+  awards:{label:'Awards',title:'title',sub:'description',order:'display_order',f:[['title','Title'],['description','Description','textarea'],['level','Level (e.g. STATE, U19)'],['display_order','Order','number']]},
+  skills:{label:'Skills',title:'name',sub:'category',order:'category',f:[['name','Skill name'],['category','Category','select',['crk','ai','dev','mk','bz']],['color','Color (e.g. #8fd0ff)'],['size','Size (12 - 26)','number']]},
+  messages:{label:'Messages',title:'name',sub:'message',order:'created_at',desc:true,readonly:true,f:[]}
+};
+let cur = 'profiles', editing = null, rows = [];
 
-  // ---------- Auth ----------
-  authBtn.onclick=async()=>{
-    hide(authMsg);
-    const {data,error}=await supabase.auth.signInWithPassword({email:authEmail.value,password:authPassword.value});
-    if(error){show(authMsg,error.message,'err');return}
-    openApp();
-  };
-  logoutBtn.onclick=async()=>{
-    await supabase.auth.signOut();
-    adminApp.style.display='none';
-    authScreen.style.display='flex';
-  };
-  supabase.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'||event==='TOKEN_REFRESHED'){openApp();}
-    else if(event==='SIGNED_OUT'){adminApp.style.display='none';authScreen.style.display='flex';}
-  });
-  async function openApp(){
-    const {data:{session}}=await supabase.auth.getSession();
-    if(!session){authScreen.style.display='flex';return;}
-    authScreen.style.display='none';
-    adminApp.style.display='flex';
-    currentUserEl.textContent=session.user.email;
-    loadProfile();
-  }
+function say(t){ $('msg').textContent = t || ''; }
 
-  // ---------- Tab navigation ----------
-  document.querySelectorAll('.nav-link').forEach(a=>{
-    a.onclick=(e)=>{
-      e.preventDefault();
-      document.querySelectorAll('.nav-link').forEach(x=>x.classList.remove('active'));
-      a.classList.add('active');
-      document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-      document.getElementById('tab-'+a.dataset.tab).classList.add('active');
-      pageTitle.textContent=a.dataset.tab.charAt(0).toUpperCase()+a.dataset.tab.slice(1);
+async function boot(){
+  const { data:{ session } } = await sb.auth.getSession();
+  show(!!session);
+}
+function show(on){
+  $('login').hidden = on; $('app').hidden = !on;
+  if(on){ buildNav(); go(cur); }
+}
+$('lbtn').onclick = async () => {
+  $('lerr').textContent = '';
+  const { error } = await sb.auth.signInWithPassword({ email:$('em').value.trim(), password:$('pw').value });
+  if(error) $('lerr').textContent = error.message; else show(true);
+};
+$('out').onclick = async () => { await sb.auth.signOut(); show(false); };
+
+function buildNav(){
+  $('nav').innerHTML = Object.keys(T).map(k => `<button data-k="${k}" class="${k===cur?'on':''}">${T[k].label}</button>`).join('');
+  $('nav').querySelectorAll('button').forEach(b => b.onclick = () => go(b.dataset.k));
+}
+async function go(k){
+  cur = k; editing = null; $('formCard').hidden = true; buildNav();
+  $('ltitle').textContent = T[k].label; $('add').hidden = !!T[k].readonly;
+  say('Loading...');
+  const { data, error } = await sb.from(k).select('*').order(T[k].order, { ascending: !T[k].desc });
+  if(error){ say('Error: ' + error.message); return; }
+  say(''); rows = data || []; renderList();
+}
+function renderList(){
+  const c = T[cur];
+  if(!rows.length){ $('list').innerHTML = '<p style="color:var(--mut)">Abhi kuch nahi hai.</p>'; return; }
+  $('list').innerHTML = rows.map((r,i) => `<div class="row"><div><strong>${esc(r[c.title])}</strong>
+    <small>${esc(String(r[c.sub] ?? '').slice(0,140))}${c.readonly ? '<br>' + esc(r.email) : ''}</small></div>
+    <div class="act">${c.readonly ? '' : `<button class="sec" data-e="${i}">Edit</button>`}<button class="del" data-d="${i}">Delete</button></div></div>`).join('');
+  $('list').querySelectorAll('[data-e]').forEach(b => b.onclick = () => openForm(rows[b.dataset.e]));
+  $('list').querySelectorAll('[data-d]').forEach(b => b.onclick = () => del(rows[b.dataset.d]));
+}
+function openForm(row){
+  editing = row || null; const c = T[cur];
+  $('ftitle').textContent = (row ? 'Edit ' : 'Add ') + c.label;
+  $('fields').innerHTML = c.f.map(([k,l,t,x]) => {
+    const v = row ? (row[k] ?? '') : '';
+    if(t === 'textarea') return `<label>${l}</label><textarea id="f_${k}">${esc(v)}</textarea>`;
+    if(t === 'select') return `<label>${l}</label><select id="f_${k}">${x.map(o=>`<option ${o===v?'selected':''}>${o}</option>`).join('')}</select>`;
+    if(t === 'image') return `<label>${l}</label><img class="pv" id="pv_${k}" src="${esc(v)}" ${v?'':'hidden'}>
+      <input type="file" id="up_${k}" accept="image/*"><input id="f_${k}" value="${esc(v)}" placeholder="ya image URL paste karo">`;
+    return `<label>${l}</label><input id="f_${k}" type="${t==='number'?'number':'text'}" value="${esc(v)}">`;
+  }).join('');
+  c.f.filter(x => x[2] === 'image').forEach(([k]) => {
+    $('up_'+k).onchange = async e => {
+      const file = e.target.files[0]; if(!file) return;
+      say('Uploading image...');
+      const path = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+      const { error } = await sb.storage.from('portfolio').upload(path, file);
+      if(error){ say('Upload error: ' + error.message); return; }
+      const url = sb.storage.from('portfolio').getPublicUrl(path).data.publicUrl;
+      $('f_'+k).value = url; $('pv_'+k).src = url; $('pv_'+k).hidden = false; say('Image uploaded. Ab Save dabao.');
     };
   });
-
-  // ---------- Helpers ----------
-  function tableBody(id){return document.getElementById(id);}
-  function esc(s){return s==null?'':String(s);}
-
-  // ---------- Profile ----------
-  async function loadProfile(){
-    const {data,error}=await supabase.from('profiles').select('*').limit(1);
-    if(error){show(document.getElementById('profileMsg'),error.message,'err');return;}
-    hide(document.getElementById('profileMsg'));
-    const p=data&&data[0];
-    if(!p){show(document.getElementById('profileMsg'),'No profile row found. Run supabase/schema.sql seed.','err');return;}
-    document.getElementById('pfName').value=p.name||'';
-    document.getElementById('pfRole').value=p.role||'';
-    document.getElementById('pfFrom').value=p.from_location||'';
-    document.getElementById('pfCompany').value=p.company||'';
-    document.getElementById('pfProgram').value=p.program||'';
-    document.getElementById('pfInstitution').value=p.institution||'';
-    document.getElementById('pfInterests').value=p.interests||'';
-    document.getElementById('pfEmail').value=p.email||'';
-    document.getElementById('profileForm').onsubmit=async(e)=>{
-      e.preventDefault();
-      const {error}=await supabase.from('profiles').update({
-        name:document.getElementById('pfName').value,
-        role:document.getElementById('pfRole').value,
-        from_location:document.getElementById('pfFrom').value,
-        company:document.getElementById('pfCompany').value,
-        program:document.getElementById('pfProgram').value,
-        institution:document.getElementById('pfInstitution').value,
-        interests:document.getElementById('pfInterests').value,
-        email:document.getElementById('pfEmail').value,
-      }).eq('id',p.id);
-      if(error){show(document.getElementById('profileMsg'),error.message,'err');}
-      else{show(document.getElementById('profileMsg'),'Profile saved.','ok');}
-    };
-  }
-
-  // ---------- Generic CRUD ----------
-  async function loadTable(table,bodyId,render,msgId){
-    const {data,error}=await supabase.from(table).select('*').order('display_order',{ascending:true}).order('created_at',{ascending:true});
-    if(error){show(document.getElementById(msgId),error.message,'err');return;}
-    hide(document.getElementById(msgId));
-    const tb=tableBody(bodyId);tb.innerHTML='';
-    (data||[]).forEach(render);
-  }
-
-  function editorToggle(showEl,hideEl=true){
-    if(showEl)showEl.style.display='';
-    if(hideEl!==false){}
-  }
-
-  // -------- Projects --------
-  let editProjectId=null;
-  async function loadProjects(){
-    await loadTable('projects','projectsBody',renderProjectRow,'projectsMsg');
-  }
-  function renderProjectRow(p){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td><b>${esc(p.title)}</b></td>
-      <td><span class="badge">${esc(p.category)}</span></td>
-      <td>${esc(p.description)}</td>
-      <td>${esc(p.image_url)}</td>
-      <td>${esc(p.link_url)}</td>
-      <td>${p.display_order}</td>
-      <td>
-        <button class="bt small secondary" onclick="app.editProject('${p.id}')">Edit</button>
-        <button class="bt small danger" onclick="app.deleteProject('${p.id}')">Del</button>
-      </td>
-    `;
-    tableBody('projectsBody').appendChild(tr);
-  }
-  document.getElementById('addProjectBtn').onclick=()=>{
-    editProjectId=null;document.getElementById('projEditorTitle').textContent='New Project';
-    document.getElementById('projectForm').reset();document.getElementById('projId').value='';
-    document.getElementById('deleteProject').style.display='none';
-    document.getElementById('projectEditor').style.display='';
-  };
-  document.getElementById('cancelProject').onclick=()=>document.getElementById('projectEditor').style.display='none';
-  window.app=window.app||{};
-  window.app.editProject=(id)=>{
-    editProjectId=id;
-    supabase.from('projects').select('*').eq('id',id).single().then(({data:p})=>{
-      if(!p)return;
-      document.getElementById('projEditorTitle').textContent='Edit Project';
-      document.getElementById('projId').value=p.id;
-      document.getElementById('projTitle').value=p.title||'';
-      document.getElementById('projCategory').value=p.category||'';
-      document.getElementById('projDesc').value=p.description||'';
-      document.getElementById('projImage').value=p.image_url||'';
-      document.getElementById('projLink').value=p.link_url||'';
-      document.getElementById('projOrder').value=p.display_order||0;
-      document.getElementById('deleteProject').style.display='';
-      document.getElementById('projectEditor').style.display='';
-    });
-  };
-  window.app.deleteProject=async(id)=>{
-    if(!confirm('Delete this project?'))return;
-    const {error}=await supabase.from('projects').delete().eq('id',id);
-    if(error){show(document.getElementById('projectsMsg'),error.message,'err');}
-    else{loadProjects();}
-  };
-  document.getElementById('projectForm').onsubmit=async(e)=>{
-    e.preventDefault();
-    const row={title:document.getElementById('projTitle').value,category:document.getElementById('projCategory').value,description:document.getElementById('projDesc').value,image_url:document.getElementById('projImage').value,link_url:document.getElementById('projLink').value,display_order:parseInt(document.getElementById('projOrder').value||0)};
-    const {error}=editProjectId?await supabase.from('projects').update(row).eq('id',editProjectId):await supabase.from('projects').insert(row);
-    if(error){show(document.getElementById('projectsMsg'),error.message,'err');}
-    else{document.getElementById('projectEditor').style.display='none';loadProjects();}
-  };
-
-  // -------- Skills --------
-  let editSkillId=null;
-  async function loadSkills(){
-    await loadTable('skills','skillsBody',renderSkillRow,'skillsMsg');
-  }
-  function renderSkillRow(s){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td><b>${esc(s.name)}</b></td>
-      <td><span class="badge ${s.category}">${esc(s.category)}</span></td>
-      <td>${s.size}</td>
-      <td>${esc(s.color)}</td>
-      <td>
-        <button class="bt small secondary" onclick="app.editSkill('${s.id}')">Edit</button>
-        <button class="bt small danger" onclick="app.deleteSkill('${s.id}')">Del</button>
-      </td>
-    `;
-    tableBody('skillsBody').appendChild(tr);
-  }
-  document.getElementById('addSkillBtn').onclick=()=>{
-    editSkillId=null;document.getElementById('skillEditorTitle').textContent='New Skill';
-    document.getElementById('skillForm').reset();document.getElementById('skillId').value='';
-    document.getElementById('deleteSkill').style.display='none';
-    document.getElementById('skillEditor').style.display='';
-  };
-  document.getElementById('cancelSkill').onclick=()=>document.getElementById('skillEditor').style.display='none';
-  window.app.editSkill=(id)=>{
-    editSkillId=id;
-    supabase.from('skills').select('*').eq('id',id).single().then(({data:s})=>{
-      if(!s)return;
-      document.getElementById('skillEditorTitle').textContent='Edit Skill';
-      document.getElementById('skillId').value=s.id;
-      document.getElementById('skillName').value=s.name||'';
-      document.getElementById('skillCategory').value=s.category||'crk';
-      document.getElementById('skillSize').value=s.size||20;
-      document.getElementById('skillColor').value=s.color||'';
-      document.getElementById('deleteSkill').style.display='';
-      document.getElementById('skillEditor').style.display='';
-    });
-  };
-  window.app.deleteSkill=async(id)=>{
-    if(!confirm('Delete this skill?'))return;
-    const {error}=await supabase.from('skills').delete().eq('id',id);
-    if(error){show(document.getElementById('skillsMsg'),error.message,'err');}
-    else{loadSkills();}
-  };
-  document.getElementById('skillForm').onsubmit=async(e)=>{
-    e.preventDefault();
-    const row={name:document.getElementById('skillName').value,category:document.getElementById('skillCategory').value,size:parseInt(document.getElementById('skillSize').value||20),color:document.getElementById('skillColor').value};
-    const {error}=editSkillId?await supabase.from('skills').update(row).eq('id',editSkillId):await supabase.from('skills').insert(row);
-    if(error){show(document.getElementById('skillsMsg'),error.message,'err');}
-    else{document.getElementById('skillEditor').style.display='none';loadSkills();}
-  };
-
-  // -------- Awards --------
-  let editAwardId=null;
-  async function loadAwards(){
-    await loadTable('awards','awardsBody',renderAwardRow,'awardsMsg');
-  }
-  function renderAwardRow(a){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${a.display_order}</td>
-      <td><b>${esc(a.title)}</b></td>
-      <td>${esc(a.level)}</td>
-      <td>${esc(a.description)}</td>
-      <td>${a.display_order}</td>
-      <td>
-        <button class="bt small secondary" onclick="app.editAward('${a.id}')">Edit</button>
-        <button class="bt small danger" onclick="app.deleteAward('${a.id}')">Del</button>
-      </td>
-    `;
-    tableBody('awardsBody').appendChild(tr);
-  }
-  document.getElementById('addAwardBtn').onclick=()=>{
-    editAwardId=null;document.getElementById('awardEditorTitle').textContent='New Award';
-    document.getElementById('awardForm').reset();document.getElementById('awardId').value='';
-    document.getElementById('deleteAward').style.display='none';
-    document.getElementById('awardEditor').style.display='';
-  };
-  document.getElementById('cancelAward').onclick=()=>document.getElementById('awardEditor').style.display='none';
-  window.app.editAward=(id)=>{
-    editAwardId=id;
-    supabase.from('awards').select('*').eq('id',id).single().then(({data:a})=>{
-      if(!a)return;
-      document.getElementById('awardEditorTitle').textContent='Edit Award';
-      document.getElementById('awardId').value=a.id;
-      document.getElementById('awardTitle').value=a.title||'';
-      document.getElementById('awardLevel').value=a.level||'';
-      document.getElementById('awardDesc').value=a.description||'';
-      document.getElementById('awardOrder').value=a.display_order||0;
-      document.getElementById('deleteAward').style.display='';
-      document.getElementById('awardEditor').style.display='';
-    });
-  };
-  window.app.deleteAward=async(id)=>{
-    if(!confirm('Delete this award?'))return;
-    const {error}=await supabase.from('awards').delete().eq('id',id);
-    if(error){show(document.getElementById('awardsMsg'),error.message,'err');}
-    else{loadAwards();}
-  };
-  document.getElementById('awardForm').onsubmit=async(e)=>{
-    e.preventDefault();
-    const row={title:document.getElementById('awardTitle').value,level:document.getElementById('awardLevel').value,description:document.getElementById('awardDesc').value,display_order:parseInt(document.getElementById('awardOrder').value||0)};
-    const {error}=editAwardId?await supabase.from('awards').update(row).eq('id',editAwardId):await supabase.from('awards').insert(row);
-    if(error){show(document.getElementById('awardsMsg'),error.message,'err');}
-    else{document.getElementById('awardEditor').style.display='none';loadAwards();}
-  };
-
-  // -------- Experience --------
-  let editExpId=null;
-  async function loadExperience(){
-    await loadTable('experience','experienceBody',renderExpRow,'experienceMsg');
-  }
-  function renderExpRow(x){
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td><b>${esc(x.title)}</b></td>
-      <td>${esc(x.description)}</td>
-      <td><span class="badge">${esc(x.ball_color)}</span></td>
-      <td>${x.display_order}</td>
-      <td>
-        <button class="bt small secondary" onclick="app.editExperience('${x.id}')">Edit</button>
-        <button class="bt small danger" onclick="app.deleteExperience('${x.id}')">Del</button>
-      </td>
-    `;
-    tableBody('experienceBody').appendChild(tr);
-  }
-  document.getElementById('addExperienceBtn').onclick=()=>{
-    editExpId=null;document.getElementById('experienceEditorTitle').textContent='New Experience';
-    document.getElementById('experienceForm').reset();document.getElementById('expId').value='';
-    document.getElementById('deleteExperience').style.display='none';
-    document.getElementById('experienceEditor').style.display='';
-  };
-  document.getElementById('cancelExperience').onclick=()=>document.getElementById('experienceEditor').style.display='none';
-  window.app.editExperience=(id)=>{
-    editExpId=id;
-    supabase.from('experience').select('*').eq('id',id).single().then(({data:x})=>{
-      if(!x)return;
-      document.getElementById('experienceEditorTitle').textContent='Edit Experience';
-      document.getElementById('expId').value=x.id;
-      document.getElementById('expTitle').value=x.title||'';
-      document.getElementById('expDesc').value=x.description||'';
-      document.getElementById('expColor').value=x.ball_color||'red';
-      document.getElementById('expOrder').value=x.display_order||0;
-      document.getElementById('deleteExperience').style.display='';
-      document.getElementById('experienceEditor').style.display='';
-    });
-  };
-  window.app.deleteExperience=async(id)=>{
-    if(!confirm('Delete this experience?'))return;
-    const {error}=await supabase.from('experience').delete().eq('id',id);
-    if(error){show(document.getElementById('experienceMsg'),error.message,'err');}
-    else{loadExperience();}
-  };
-  document.getElementById('experienceForm').onsubmit=async(e)=>{
-    e.preventDefault();
-    const row={title:document.getElementById('expTitle').value,description:document.getElementById('expDesc').value,ball_color:document.getElementById('expColor').value,display_order:parseInt(document.getElementById('expOrder').value||0)};
-    const {error}=editExpId?await supabase.from('experience').update(row).eq('id',editExpId):await supabase.from('experience').insert(row);
-    if(error){show(document.getElementById('experienceMsg'),error.message,'err');}
-    else{document.getElementById('experienceEditor').style.display='none';loadExperience();}
-  };
-
-  // ---------- Lazy load tab data on first visit ----------
-  const loaded=new Set();
-  document.querySelectorAll('.nav-link').forEach(a=>{
-    const orig=a.onclick;
-    a.onclick=(e)=>{
-      orig(e);
-      const t=a.dataset.tab;
-      if(!loaded.has(t)){
-        loaded.add(t);
-        if(t==='projects')loadProjects();
-        if(t==='skills')loadSkills();
-        if(t==='awards')loadAwards();
-        if(t==='experience')loadExperience();
-      }
-    };
-  });
-  // load profile tab by default
-  loadProfile();
-
-})();
+  $('formCard').hidden = false; window.scrollTo({ top:0, behavior:'smooth' });
+}
+$('add').onclick = () => openForm(null);
+$('cancel').onclick = () => { $('formCard').hidden = true; };
+$('save').onclick = async () => {
+  const c = T[cur], obj = {};
+  c.f.forEach(([k,,t]) => { let v = $('f_'+k).value; obj[k] = t === 'number' ? (v === '' ? 0 : Number(v)) : v; });
+  say('Saving...');
+  let q = c.upsert ? sb.from(cur).upsert(obj, { onConflict:c.upsert })
+        : editing ? sb.from(cur).update(obj).eq('id', editing.id)
+        : sb.from(cur).insert(obj);
+  const { error } = await q;
+  if(error){ say('Error: ' + error.message); return; }
+  $('formCard').hidden = true; await go(cur); say('Saved!');
+};
+async function del(r){
+  if(!confirm('Pakka delete karna hai?')) return;
+  const { error } = await sb.from(cur).delete().eq('id', r.id);
+  if(error){ say('Error: ' + error.message); return; }
+  go(cur);
+}
+boot();
 </script>
 </body>
 </html>
