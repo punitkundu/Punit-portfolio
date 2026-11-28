@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /admin-panel.html
+Sitemap: https://punitkundu.github.io/Punit-portfolio/extracted/sitemap.xml
