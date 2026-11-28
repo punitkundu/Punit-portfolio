@@ -96,7 +96,7 @@ nav div{display:flex;gap:13px;color:var(--mu)}nav div a:hover{color:var(--tx)}
 @keyframes lin{from{opacity:0;transform:translateY(46px) scale(.55);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
 .me{position:absolute;left:50%;bottom:0;width:var(--pw,300px);margin-left:calc(var(--pw,300px)/-2);z-index:4;opacity:0}
 .mi{transform-origin:50% 100%;will-change:transform}
-.me img{display:block;width:100%;-webkit-mask-image:linear-gradient(#000 80%,transparent 99%);mask-image:linear-gradient(#000 80%,transparent 99%);filter:drop-shadow(0 0 2px rgba(255,236,190,.55)) drop-shadow(0 0 30px rgba(255,236,190,.16));animation:float 6s ease-in-out infinite}
+.me img{display:block;width:100%;height:auto;-webkit-mask-image:linear-gradient(#000 80%,transparent 99%);mask-image:linear-gradient(#000 80%,transparent 99%);filter:drop-shadow(0 0 2px rgba(255,236,190,.55)) drop-shadow(0 0 30px rgba(255,236,190,.16));animation:float 6s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-7px)}}
 .live .me{animation:rise 1.5s cubic-bezier(.16,.84,.24,1) .15s both}.live .hlab{animation:up 1s ease .4s forwards}.live .lt{animation:lt 1s ease 1.8s forwards}.live .sc{animation:up 1s ease 2.2s forwards}
 @keyframes rise{from{opacity:0;transform:translateY(120px)}to{opacity:1;transform:none}}
